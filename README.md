@@ -52,19 +52,69 @@ Model Waveform
 <img width="706" height="167" alt="image" src="https://github.com/user-attachments/assets/bff0d8fd-d679-444e-af37-0b34585853c1" />
 
 Program
+clc;
+clear;
+close;
+Am = 10.8;          // Message amplitude
+Ac = 21.6;          // Carrier amplitude
+Fm = 560;           // Message frequency (Hz)
+Fc = 5600;          // Carrier frequency (Hz)
+Fs = 55000;         // Sampling frequency (Hz)
+
+//// Time vector
+t = 0:1/Fs:0.005;   // 5 ms duration
+
+//// Message signal
+m = Am * sin(2 * %pi * Fm * t);
+
+//// Carrier signal
+c = Ac * sin(2 * %pi * Fc * t);
+
+//// Hilbert transform (to get quadrature component)
+mh = imag(hilbert(m));   // Hilbert transform of message
+
+//// Generate Upper Sideband (USB)
+s_usb = Ac * (m .* cos(2 * %pi * Fc * t) - mh .* sin(2 * %pi * Fc * t));
+s_lsb = Ac * (m .* cos(2 * %pi * Fc * t) + mh .* sin(2 * %pi * Fc * t));
+subplot(4,1,1)
+plot(t, m)
+title('Message Signal')
+xlabel('Time (s)')
+ylabel('Amplitude')
+xgrid()
+
+subplot(4,1,2)
+plot(t, c)
+title('Carrier Signal')
+xlabel('Time (s)')
+ylabel('Amplitude')
+xgrid()
+
+subplot(4,1,3)
+plot(t, s_usb)
+title('SSB-SC Upper Sideband Signal')
+xlabel('Time (s)')
+ylabel('Amplitude')
+xgrid()
+
+subplot(4,1,4)
+plot(t, s_lsb)
+title('SSB-SC Lower Sideband Signal')
+xlabel('Time (s)')
+ylabel('Amplitude')
+xgrid()
+disp("   Time(s)        Message(V)        Carrier(V)        USB(V)        LSB(V)");
+for i = 1:10:length(t)
+    mprintf("%10.6f    %10.4f    %10.4f    %10.4f    %10.4f\n", t(i), m(i), c(i), s_usb(i), s_lsb(i));
+end
 
 OUTPUT WAVEFORM
+<img width="764" height="723" alt="Screenshot 2025-10-30 092248" src="https://github.com/user-attachments/assets/122e897a-0d28-475f-8715-62e09e23d03a" />
+
+
 
 TABULATION
-
-
-
-
-
-
-
-
-
+<img width="1280" height="767" alt="image" src="https://github.com/user-attachments/assets/0db73aac-164d-463b-a453-7436f0b7e1b7" />
 RESULT:
 
 Thus, the SSB-SC-AM Modulation and Demodulation is experimentally done and the output is verified.
